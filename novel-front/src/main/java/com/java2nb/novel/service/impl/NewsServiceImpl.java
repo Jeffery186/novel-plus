@@ -35,14 +35,14 @@ public class NewsServiceImpl implements NewsService {
     public List<News> listIndexNews() {
         List<News> result = (List<News>) cacheService.getObject(CacheKey.INDEX_NEWS_KEY);
         if(result == null || result.size() == 0) {
-            SelectStatementProvider selectStatement = select(id, catName, catId, title)
+            SelectStatementProvider selectStatement = select(id, catName, catId, title,createTime)
                     .from(news)
                     .orderBy(createTime.descending())
                     .limit(2)
                     .build()
                     .render(RenderingStrategies.MYBATIS3);
             result = newsMapper.selectMany(selectStatement);
-            cacheService.setObject(CacheKey.INDEX_NEWS_KEY,result);
+            cacheService.setObject(CacheKey.INDEX_NEWS_KEY,result,60 * 60 * 12);
         }
         return result;
     }
